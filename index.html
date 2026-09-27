@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f4ef">
+  <title>筋トレ記録</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <p class="eyebrow">TRAINING JOURNAL</p>
+      <h1>筋トレ記録</h1>
+      <p class="subtitle">今日の積み重ねを、記録に残そう。</p>
+    </header>
+
+    <section class="card daily-card" aria-labelledby="daily-heading">
+      <div class="date-row">
+        <div>
+          <p class="eyebrow">DAILY WORKOUT</p>
+          <h2 id="daily-heading">今日のトレーニング</h2>
+        </div>
+        <label class="date-label" for="workout-date">日付
+          <input id="workout-date" type="date">
+        </label>
+      </div>
+      <p class="hint">セットを行ったら「＋」を押して記録します。</p>
+      <ul id="exercise-list" class="exercise-list"></ul>
+
+      <form id="custom-form" class="custom-form">
+        <h3>追加種目</h3>
+        <p class="hint">いつもの種目以外に行った種目を追加できます。</p>
+        <div class="custom-fields">
+          <label class="visually-hidden" for="custom-name">種目名</label>
+          <input id="custom-name" name="name" type="text" maxlength="60" placeholder="種目名（例：ダンベルカール）" required>
+          <label class="visually-hidden" for="custom-reps">1セットの回数</label>
+          <input id="custom-reps" name="reps" type="number" min="1" max="999" inputmode="numeric" placeholder="回数" required>
+          <button type="submit">追加</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="progress" aria-labelledby="progress-heading">
+      <div class="progress-title">
+        <div>
+          <p class="eyebrow">KEEP IT GOING</p>
+          <h2 id="progress-heading">続けた記録</h2>
+        </div>
+      </div>
+      <div class="stats">
+        <article class="stat-card">
+          <span class="stat-label">連続達成日数</span>
+          <p class="stat-value"><span id="streak-count">0</span><span class="stat-unit">日</span></p>
+        </article>
+        <article class="stat-card">
+          <span id="monthly-label" class="stat-label">今月の達成率</span>
+          <p class="stat-value"><span id="monthly-rate">0</span><span class="stat-unit">%</span></p>
+          <span id="monthly-days" class="stat-note">0 / 0日</span>
+        </article>
+      </div>
+
+      <div class="calendar-card">
+        <div class="calendar-heading">
+          <button id="previous-month" class="month-button" type="button" aria-label="前の月">‹</button>
+          <h3 id="calendar-month"></h3>
+          <button id="next-month" class="month-button" type="button" aria-label="次の月">›</button>
+        </div>
+        <div class="calendar-grid" aria-hidden="true">
+          <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+        </div>
+        <div id="calendar-days" class="calendar-grid calendar-days" aria-label="月間トレーニングカレンダー"></div>
+        <div class="calendar-legend"><span><i class="legend-dot achieved"></i>7種目達成</span><span><i class="legend-dot partial"></i>記録あり</span></div>
+      </div>
+      <p class="calendar-hint">日付を押すと、その日のセット数を確認・編集できます。</p>
+    </section>
+
+    <section class="history" aria-labelledby="history-heading">
+      <div class="history-title">
+        <div>
+          <p class="eyebrow">YOUR PROGRESS</p>
+          <h2 id="history-heading">過去の記録</h2>
+        </div>
+        <span id="day-count" class="count">0日</span>
+      </div>
+      <div id="history-list" class="history-list" aria-live="polite"></div>
+      <p id="empty-message" class="empty-message">記録はまだありません。セット数を「＋」で記録してみましょう。</p>
+    </section>
+    <p class="save-note">記録はこのブラウザに自動保存されます。</p>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
