@@ -1,4 +1,5 @@
 const STORAGE_KEY = "workout-daily-sets-v2";
+const WELLNESS_STORAGE_KEY = "workout-wellness-v1";
 
 const DEFAULT_EXERCISES = [
   { name: "座りスクワット", reps: 15 },
@@ -22,6 +23,8 @@ const streakCount = document.querySelector("#streak-count");
 const monthlyLabel = document.querySelector("#monthly-label");
 const monthlyRate = document.querySelector("#monthly-rate");
 const monthlyDays = document.querySelector("#monthly-days");
+const sleepInput = document.querySelector("#sleep-hours");
+const conditionInputs = document.querySelectorAll('input[name="condition"]');
 
 let calendarMonth = new Date();
 calendarMonth.setDate(1);
@@ -40,10 +43,47 @@ function loadRecords() {
 }
 
 let recordsByDate = loadRecords();
+let wellnessByDate = loadWellness();
 dateInput.value = getToday();
+
+function loadWellness() {
+  try {
+    return JSON.parse(localStorage.getItem(WELLNESS_STORAGE_KEY)) || {};
+  } catch (error) {
+    return {};
+  }
+}
 
 function saveRecords() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(recordsByDate));
+}
+
+function saveWellness() {
+  const date = dateInput.value;
+  const condition = document.querySelector('input[name="condition"]:checked');
+  const sleepHours = sleepInput.value === "" ? null : Number(sleepInput.value);
+  const entry = {
+    condition: condition ? Number(condition.value) : null,
+    sleepHours,
+  };
+
+  if (entry.condition === null && entry.sleepHours === null) {
+    delete wellnessByDate[date];
+  } else {
+    wellnessByDate[date] = entry;
+  }
+
+  localStorage.setItem(WELLNESS_STORAGE_KEY, JSON.stringify(wellnessByDate));
+  renderHistory();
+  renderCalendar();
+}
+
+function renderWellness() {
+  const wellness = wellnessByDate[dateInput.value] || {};
+  conditionInputs.forEach((input) => {
+    input.checked = Number(wellness.condition) === Number(input.value);
+  });
+  sleepInput.value = wellness.sleepHours ?? "";
 }
 
 function getExercisesForDate(date) {
@@ -129,12 +169,17 @@ function formatDate(date) {
 
 function renderHistory() {
   historyList.replaceChildren();
-  const dates = Object.keys(recordsByDate)
-    .filter((date) => recordsByDate[date].some((exercise) => exercise.sets > 0))
+  const dates = [...new Set([
+    ...Object.keys(recordsByDate).filter((date) => (recordsByDate[date] || []).some((exercise) => exercise.sets > 0)),
+    ...Object.keys(wellnessByDate).filter((date) => {
+      const wellness = wellnessByDate[date];
+      return wellness.condition !== null || wellness.sleepHours !== null;
+    }),
+  ])]
     .sort((a, b) => b.localeCompare(a));
 
   dates.forEach((date) => {
-    const completed = recordsByDate[date].filter((exercise) => exercise.sets > 0);
+    const completed = (recordsByDate[date] || []).filter((exercise) => exercise.sets > 0);
     const card = document.createElement("article");
     card.className = "day-card";
     const heading = document.createElement("div");
@@ -143,7 +188,9 @@ function renderHistory() {
     title.textContent = formatDate(date);
     const total = document.createElement("span");
     total.className = "day-total";
-    total.textContent = `${completed.length}種目・${completed.reduce((sum, item) => sum + item.sets, 0)}セット`;
+    total.textContent = completed.length
+      ? `${completed.length}種目・${completed.reduce((sum, item) => sum + item.sets, 0)}セット`
+      : "体調・睡眠の記録";
     heading.append(title, total);
 
     const summary = document.createElement("div");
@@ -153,6 +200,16 @@ function renderHistory() {
       line.textContent = `${exercise.name}：${exercise.sets}セット × ${exercise.reps}回`;
       summary.append(line);
     });
+    const wellness = wellnessByDate[date];
+    if (wellness && (wellness.condition !== null || wellness.sleepHours !== null)) {
+      const wellnessLine = document.createElement("p");
+      wellnessLine.className = "wellness-summary";
+      const details = [];
+      if (wellness.condition !== null) details.push(`体調 ${wellness.condition}/5`);
+      if (wellness.sleepHours !== null) details.push(`睡眠 ${wellness.sleepHours}時間`);
+      wellnessLine.textContent = details.join("・");
+      summary.append(wellnessLine);
+    }
     card.append(heading, summary);
     historyList.append(card);
   });
@@ -175,8 +232,10 @@ function isDayComplete(date) {
   );
 }
 
-function hasAnySets(date) {
-  return (recordsByDate[date] || []).some((exercise) => exercise.sets > 0);
+function hasAnyRecord(date) {
+  const wellness = wellnessByDate[date];
+  const hasWellness = wellness && (wellness.condition !== null || wellness.sleepHours !== null);
+  return (recordsByDate[date] || []).some((exercise) => exercise.sets > 0) || Boolean(hasWellness);
 }
 
 function renderStats() {
@@ -238,10 +297,10 @@ function renderCalendar() {
     button.type = "button";
     button.className = "calendar-day";
     button.textContent = day;
-    button.setAttribute("aria-label", `${formatDate(date)}${isDayComplete(date) ? "、7種目達成" : hasAnySets(date) ? "、記録あり" : "、記録なし"}`);
+    button.setAttribute("aria-label", `${formatDate(date)}${isDayComplete(date) ? "、7種目達成" : hasAnyRecord(date) ? "、記録あり" : "、記録なし"}`);
     button.setAttribute("aria-pressed", String(date === selectedDate));
     if (isDayComplete(date)) button.classList.add("achieved");
-    else if (hasAnySets(date)) button.classList.add("partial");
+    else if (hasAnyRecord(date)) button.classList.add("partial");
     if (date === selectedDate) button.classList.add("selected");
     if (date === getToday()) button.classList.add("today");
     button.addEventListener("click", () => {
@@ -255,12 +314,15 @@ function renderCalendar() {
 
 function render() {
   renderExercises();
+  renderWellness();
   renderHistory();
   renderStats();
   renderCalendar();
 }
 
 dateInput.addEventListener("change", render);
+conditionInputs.forEach((input) => input.addEventListener("change", saveWellness));
+sleepInput.addEventListener("input", saveWellness);
 document.querySelector("#previous-month").addEventListener("click", () => {
   calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
   render();

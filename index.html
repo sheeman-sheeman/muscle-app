@@ -41,6 +41,33 @@
       </form>
     </section>
 
+    <section class="card wellness-card" aria-labelledby="wellness-heading">
+      <div class="wellness-title">
+        <div>
+          <p class="eyebrow">DAILY WELLNESS</p>
+          <h2 id="wellness-heading">今日の体調と睡眠</h2>
+        </div>
+        <span class="auto-save-label">入力すると自動保存</span>
+      </div>
+      <fieldset class="condition-fieldset">
+        <legend>体の調子を選んでください</legend>
+        <div class="condition-options">
+          <label class="condition-option"><input type="radio" name="condition" value="1"><span class="condition-number">1</span><span class="condition-text">不調</span></label>
+          <label class="condition-option"><input type="radio" name="condition" value="2"><span class="condition-number">2</span><span class="condition-text">やや不調</span></label>
+          <label class="condition-option"><input type="radio" name="condition" value="3"><span class="condition-number">3</span><span class="condition-text">普通</span></label>
+          <label class="condition-option"><input type="radio" name="condition" value="4"><span class="condition-number">4</span><span class="condition-text">好調</span></label>
+          <label class="condition-option"><input type="radio" name="condition" value="5"><span class="condition-number">5</span><span class="condition-text">絶好調</span></label>
+        </div>
+      </fieldset>
+      <div class="sleep-field">
+        <label for="sleep-hours">睡眠時間</label>
+        <div class="sleep-input-wrap">
+          <input id="sleep-hours" type="number" min="0" max="24" step="0.5" inputmode="decimal" placeholder="例：7.5">
+          <span>時間</span>
+        </div>
+      </div>
+    </section>
+
     <section class="progress" aria-labelledby="progress-heading">
       <div class="progress-title">
         <div>

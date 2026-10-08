@@ -89,6 +89,25 @@ button:focus-visible { outline: 3px solid #9db4a2; outline-offset: 2px; }
 .legend-dot { width: 10px; height: 10px; border-radius: 3px; background: #e7eee8; }
 .legend-dot.achieved { background: var(--green); }
 .calendar-hint { margin: 8px 0 0; color: var(--muted); font-size: 11px; text-align: center; }
+.wellness-card { margin-top: 14px; }
+.wellness-title { display: flex; align-items: start; justify-content: space-between; gap: 10px; margin-bottom: 17px; }
+.wellness-title h2 { margin: 0; font-size: 18px; }
+.auto-save-label { padding: 5px 8px; border-radius: 999px; background: #edf1ec; color: var(--green); font-size: 10px; white-space: nowrap; }
+.condition-fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.condition-fieldset legend, .sleep-field > label { margin-bottom: 9px; font-size: 13px; font-weight: 700; }
+.condition-options { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
+.condition-option { position: relative; display: grid; justify-items: center; gap: 5px; padding: 9px 3px; border: 1px solid var(--line); border-radius: 10px; color: #536057; cursor: pointer; }
+.condition-option:hover { background: #f7f9f6; }
+.condition-option input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); clip-path: inset(50%); white-space: nowrap; }
+.condition-option input:checked + .condition-number { background: var(--green); color: #fff; }
+.condition-option input:focus-visible + .condition-number { outline: 3px solid #9db4a2; outline-offset: 2px; }
+.condition-number { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #edf1ec; color: var(--green); font-size: 14px; font-weight: 800; }
+.condition-text { font-size: 10px; white-space: nowrap; }
+.sleep-field { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 17px; }
+.sleep-field > label { margin: 0; }
+.sleep-input-wrap { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+.sleep-input-wrap input { width: 110px; min-height: 42px; text-align: right; }
+.wellness-summary { margin-top: 10px !important; padding-top: 9px; border-top: 1px solid #f0f1ec; color: var(--green); font-weight: 600; }
 
 @media (max-width: 480px) {
   body { padding: 24px 12px; }
@@ -103,4 +122,8 @@ button:focus-visible { outline: 3px solid #9db4a2; outline-offset: 2px; }
   .calendar-card { padding: 11px 8px; }
   .calendar-grid { gap: 2px; }
   .calendar-days .calendar-day { min-height: 36px; }
+  .wellness-card { padding: 19px 13px; }
+  .condition-options { gap: 4px; }
+  .condition-option { padding-right: 1px; padding-left: 1px; }
+  .condition-text { font-size: 9px; }
 }
